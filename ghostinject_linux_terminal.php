@@ -1,5 +1,37 @@
 <?php
-// GHOST1NJECT Linux PHP - v1.6 (PTY fallback fix + EOF detection)
+/*
+ * ============================================================================
+ *  GHOST1NJECT
+ *  Linux PHP Terminal + Evidence Panel
+ * ============================================================================
+ *
+ *  Version     : 1.6
+ *  Author      : Lucas Diniz
+ *  Organization: Prodigium Academy
+ *
+ *  Description :
+ *  Single-file PHP utility designed to support authorized penetration testing,
+ *  security assessments and controlled cybersecurity laboratory activities.
+ *
+ *  Features    :
+ *  - Stateful web terminal
+ *  - System and environment information
+ *  - Filesystem and upload capability assessment
+ *  - Extension write probes
+ *  - Shell / payload capability diagnostics
+ *  - Persistent reverse callback with PTY/pipe fallback handling
+ *
+ *  Purpose     :
+ *  Developed as a supporting utility for technical validation, evidence
+ *  collection and reproducible security testing in authorized environments.
+ *
+ *  NOTICE      :
+ *  This tool is intended exclusively for systems and environments for which
+ *  explicit authorization to perform security testing has been granted.
+ *
+ * ============================================================================
+ */
+
 error_reporting(0);
 session_start();
 
