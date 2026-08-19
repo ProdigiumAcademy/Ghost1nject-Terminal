@@ -8,9 +8,7 @@ The latest versions also introduce significantly improved persistent shell handl
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-![Ghost1nject-Terminal Demo](https://via.placeholder.com/800x400?text=Ghost1nject-Terminal+Preview)
-
-<img width="1912" height="767" alt="Ghost1nject-Terminal interface" src="https://github.com/user-attachments/assets/1a4b404c-c710-4a94-bce2-939e8c457ae9" />
+<img width="1362" height="518" alt="image" src="https://github.com/user-attachments/assets/c40f2ab7-e90b-47a1-ac13-50213ec3d788" />
 
 ---
 
